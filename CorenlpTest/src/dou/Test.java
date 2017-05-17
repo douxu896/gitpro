@@ -29,15 +29,15 @@ public class Test {
 		// TODO 自动生成的方法存根
 		 Test test = new Test();
 		//读取xml文件的文件夹路径
-	      String infile="E:"+File.separator+"XMLExample";
+	      String infile=File.separator+"media"+File.separator+"emily"+File.separator+"06C4707CC4707033"+File.separator+"XMLExample";
 	    //输出预处理后的数据的csv文件
-		  String outfile ="D:"+File.separator+"CSV"+File.separator;
+		  String outfile =File.separator+"home"+File.separator+"emily"+File.separator+"Desktop"+File.separator+"CSV";
 		  String kuozhan = ".csv";
+		  createDir(outfile);
 	    // creates a StanfordCoreNLP object, with POS tagging, lemmatization, NER, parsing, and coreference resolution
         Properties props = new Properties(); 
         props.put("annotators", "tokenize, cleanxml, ssplit, pos, lemma, ner, parse, dcoref");  //cleanxml, sentiment,
-        StanfordCoreNLP pipeline = new StanfordCoreNLP(props);
-          
+        StanfordCoreNLP pipeline = new StanfordCoreNLP(props);  
         List<String> file =getListFiles(infile,"",true);
         Iterator<String> it = file.iterator();
         while(it.hasNext()){
@@ -54,69 +54,48 @@ public class Test {
                        dataList.add(word+","+pos);
     	           } 
             }
-    	   System.out.println(filename);
-    	   //filename.replaceFirst("E:\\XMLExample\\",""); 
-    	   String name = filename.replaceFirst("E:\\\\XMLExample\\\\",""); 
-    	   String name1 = name.replaceFirst(".xml",""); 
-    	   //filename.replaceFirst("E",""); 
-    	   System.out.println(name1);
-    	   String subfile =outfile+File.separator+name1+kuozhan;
+    	   String name = getfilename(filename);
+    	   System.out.println(name);
+    	   String subfile =outfile+File.separator+name+kuozhan;
     	   System.out.println(subfile);
     	   CSVUtils.exportCsv(new File(subfile), dataList); //导出csv文件
     	         //    test.importCsv();  //导入csv文件
        }
-     //   String text = test.Context("E:"+File.separator+"XMLExample"+File.separator+"AccessResourceExample2.xml");
-       // String text = "Add your text here";
-        // create an empty Annotation just with the given text
-     /*   Annotation document = new Annotation(text);
-      // run all Annotators on this text
-        pipeline.annotate(document);
-         // these are all the sentences in this document
-         // a CoreMap is essentially a Map that uses class objects as keys and has values with custom types
-         List<CoreMap> sentences = document.get(SentencesAnnotation.class);
-         File outfile = new File("D:"+File.separator+"q.csv");
-         List<String> dataList=new ArrayList<String>();
-         for(CoreMap sentence: sentences) {
-
-           // traversing the words in the current sentence
-
-           // a CoreLabel is a CoreMap with additional token-specific methods
-
-           for (CoreLabel token: sentence.get(TokensAnnotation.class)) {
-
-             // this is the text of the token
-
-             String word = token.get(TextAnnotation.class);
-
-             // this is the POS tag of the token
-
-             String pos = token.get(PartOfSpeechAnnotation.class);
-
-          //   System.out.println(word+" "+pos);
-             dataList.add(word+","+pos);
-
-           }*/
-        //   CSVUtils.exportCsv(outfile, dataList); //导出csv文件
-           // this is the parse tree of the current sentence
-      //    test.importCsv();  //导入csv文件
          /*  Tree tree = sentence.get(TreeAnnotation.class);
            // this is the Stanford dependency graph of the current sentence
-
-           SemanticGraph dependencies = sentence.get(CollapsedCCProcessedDependenciesAnnotation.class);*/
-
+         SemanticGraph dependencies = sentence.get(CollapsedCCProcessedDependenciesAnnotation.class);
+         Both sentence and token offsets start at 1!
+         Map<Integer, CorefChain> graph =
+                  document.get(CorefChainAnnotation.class);*/
          }
-         // This is the coreference link graph
+    
+		private static boolean createDir(String file) {
+		// TODO Auto-generated method stub
+			File dir = new File(file);
+			if (dir.exists()) {// 判断目录是否存在
+				System.out.println("创建CSV目录失败，目标目录已存在！");
+				return false;
+			}
+			if (!file.endsWith(File.separator)) {// 结尾是否以"/"结束
+				file = file + File.separator;
+			}
+			if (dir.mkdirs()) {// 创建目标目录
+				System.out.println("创建CSV目录成功！" + file);
+				return true;
+			} else {
+				System.out.println("创建CSV目录失败！");
+				return false;
+			}
+	}
 
-         // Each chain stores a set of mentions that link to each other,
-
-         // along with a method for getting the most representative mention
-
-         // Both sentence and token offsets start at 1!
-       /*  Map<Integer, CorefChain> graph =
-
-                 document.get(CorefChainAnnotation.class);*/
-
-  //从XMl文件中读取
+		private static String getfilename(String filename) {
+		// TODO Auto-generated method stub
+			File fname = new File(filename.trim());
+			String name = fname.getName();
+		return name;
+	}
+		
+  //从XMl文件中读取内容
 	String Context(String path) {
 		// TODO 自动生成的方法存根
 		 StringBuilder result = new StringBuilder();
@@ -132,7 +111,7 @@ public class Test {
 	        }
 		return result.toString();
 	}
-	 //csv文件
+	 //导入csv文件
     public void importCsv()  {
         List<String> dataList=CSVUtils.importCsv(new File("D:"+File.separator+"q.csv"));
         if(dataList!=null && !dataList.isEmpty()){
@@ -141,6 +120,7 @@ public class Test {
             }
         }
     }
+    //获取某文件夹下所有文件及子文件名称
     public static List<String> getListFiles(String path, String suffix, boolean isdepth) {  
     	  List<String> lstFileNames = new ArrayList<String>();  
     	  File file = new File(path);  
