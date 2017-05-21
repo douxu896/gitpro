@@ -31,7 +31,7 @@ public class Test {
 		 Test test = new Test();
 		 Instant instant = Instant.now();
 		//读取xml文件的文件夹路径  
-	      String infile=File.separator+"home"+File.separator+"emily"+File.separator+"Desktop"+File.separator+"Xmldata"+File.separator+"PsychOpen"+File.separator+"v9i1";
+	      String infile=File.separator+"home"+File.separator+"emily"+File.separator+"Desktop"+File.separator+"Xmldata"+File.separator+"PsychOpen";
 	    //输出预处理后的数据的csv文件
 		  String outfile =File.separator+"home"+File.separator+"emily"+File.separator+"Desktop"+File.separator+"CSV";
 		  String kuozhan = ".csv";
@@ -39,7 +39,8 @@ public class Test {
 		  System.out.println(instant);
 	    // creates a StanfordCoreNLP object, with POS tagging, lemmatization, NER, parsing, and coreference resolution
         Properties props = new Properties(); 
-        props.put("annotators", "tokenize, cleanxml, ssplit, pos, lemma, ner, parse, dcoref");  //cleanxml, sentiment,
+     //   props.put("annotators", "tokenize, cleanxml, ssplit, pos, lemma, ner, parse, dcoref");  //cleanxml, sentiment,
+        props.put("annotators", "tokenize, cleanxml,  ssplit,  pos"); 
         StanfordCoreNLP pipeline = new StanfordCoreNLP(props);  
         List<String> file =getListFiles(infile,"",true);
         Iterator<String> it = file.iterator();
