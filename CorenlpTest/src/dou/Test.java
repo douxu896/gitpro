@@ -3,6 +3,7 @@
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
+import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -28,12 +29,14 @@ public class Test {
 	public static void main(String[] args) {
 		// TODO 自动生成的方法存根
 		 Test test = new Test();
-		//读取xml文件的文件夹路径
-	      String infile=File.separator+"media"+File.separator+"emily"+File.separator+"06C4707CC4707033"+File.separator+"XMLExample";
+		 Instant instant = Instant.now();
+		//读取xml文件的文件夹路径  
+	      String infile=File.separator+"home"+File.separator+"emily"+File.separator+"Desktop"+File.separator+"Xmldata"+File.separator+"PsychOpen"+File.separator+"v9i1";
 	    //输出预处理后的数据的csv文件
 		  String outfile =File.separator+"home"+File.separator+"emily"+File.separator+"Desktop"+File.separator+"CSV";
 		  String kuozhan = ".csv";
 		  createDir(outfile);
+		  System.out.println(instant);
 	    // creates a StanfordCoreNLP object, with POS tagging, lemmatization, NER, parsing, and coreference resolution
         Properties props = new Properties(); 
         props.put("annotators", "tokenize, cleanxml, ssplit, pos, lemma, ner, parse, dcoref");  //cleanxml, sentiment,
@@ -55,10 +58,11 @@ public class Test {
     	           } 
             }
     	   String name = getfilename(filename);
-    	   System.out.println(name);
+    	 //  System.out.println(name);
     	   String subfile =outfile+File.separator+name+kuozhan;
-    	   System.out.println(subfile);
     	   CSVUtils.exportCsv(new File(subfile), dataList); //导出csv文件
+    	   System.out.print(subfile+" ");
+    	   System.out.println(instant);
     	         //    test.importCsv();  //导入csv文件
        }
          /*  Tree tree = sentence.get(TreeAnnotation.class);
@@ -73,7 +77,7 @@ public class Test {
 		// TODO Auto-generated method stub
 			File dir = new File(file);
 			if (dir.exists()) {// 判断目录是否存在
-				System.out.println("创建CSV目录失败，目标目录已存在！");
+				System.out.print("创建CSV目录失败，目标目录已存在！ ");
 				return false;
 			}
 			if (!file.endsWith(File.separator)) {// 结尾是否以"/"结束
@@ -156,4 +160,3 @@ public class Test {
     	  return lstFileNames;  
     	 }  
 	}
-
