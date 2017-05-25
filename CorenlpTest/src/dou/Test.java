@@ -28,9 +28,8 @@ public class Test {
 		// TODO 自动生成的方法存根
 		 Test test = new Test();
 		 Instant instant = Instant.now();
-		//读取xml文件的文件夹路径  
-	      String infile=File.separator+"home"+File.separator+"emily"+File.separator+"Desktop"
-		+File.separator+"Xmldata"+File.separator+"PMC";
+		 String infile=File.separator+"home"+File.separator+"emily"+File.separator+"Desktop"+File.separator+"Xmldata"
+				  +File.separator+"PMC";
 	    //输出预处理后的数据的csv文件
 		  String outfile =File.separator+"home"+File.separator+"emily"+File.separator+"Desktop"+File.separator+"CSV4";
 		  String kuozhan = ".csv";
@@ -45,6 +44,7 @@ public class Test {
         Iterator<String> it = file.iterator();
         while(it.hasNext()){
            String filename = (String)it.next();
+           if(new File(filename).exists()){
     	   String text = test.Context(filename);
     	   Annotation document = new Annotation(text);
     	   pipeline.annotate(document);
@@ -65,6 +65,7 @@ public class Test {
     	   System.out.println(instant);
     	         //    test.importCsv();  //导入csv文件
        }
+        }
          /*  Tree tree = sentence.get(TreeAnnotation.class);
            // this is the Stanford dependency graph of the current sentence
          SemanticGraph dependencies = sentence.get(CollapsedCCProcessedDependenciesAnnotation.class);

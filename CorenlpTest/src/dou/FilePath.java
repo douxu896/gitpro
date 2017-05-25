@@ -3,8 +3,21 @@ package dou;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicInteger;
 
-public class FilePath {
+public class FilePath implements Runnable {
+	
+	private volatile boolean isRunning = true;
+    private BlockingQueue<String> queue;// 内存缓冲区
+    private static AtomicInteger count = new AtomicInteger();// 总数 原子操作
+    private static final int SLEEPTIME = 1000;
+
+    public FilePath(BlockingQueue<String> queue) {
+        this.queue = queue;
+    }
+	
 	 static boolean createDir(String file) {
 		// TODO Auto-generated method stub
 			File dir = new File(file);
@@ -56,5 +69,28 @@ public class FilePath {
     	   }  
     	  }  
     	  return lstFileNames;  
-    	 }  
+    	 }
+	@Override
+	 public void run() {
+        String data = null;
+        System.out.println("start producting id:" + Thread.currentThread().getId());
+        try {
+            while (isRunning) {
+                Thread.sleep(r.nextInt(SLEEPTIME));
+                data = new String(count.incrementAndGet());
+                System.out.println(data + " 加入队列");
+                if (!queue.offer(data, 2, TimeUnit.SECONDS)) {
+                    System.err.println(" 加入队列失败");
+                }
+            }
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+            Thread.currentThread().interrupt();
+        }
+
+    }
+
+    public void stop() {
+        isRunning = false;
+    }
 }
