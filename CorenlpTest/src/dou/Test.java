@@ -19,8 +19,6 @@ import edu.stanford.nlp.ling.CoreLabel;
 import edu.stanford.nlp.pipeline.Annotation;
 import edu.stanford.nlp.pipeline.SentimentAnnotator;
 import edu.stanford.nlp.pipeline.StanfordCoreNLP;
-import edu.stanford.nlp.trees.Tree;
-import edu.stanford.nlp.trees.TreeCoreAnnotations.TreeAnnotation;
 import edu.stanford.nlp.util.CoreMap;
 import edu.stanford.nlp.util.PropertiesUtils;
 
@@ -30,22 +28,23 @@ public class Test {
 		// TODO 自动生成的方法存根
 		 Test test = new Test();
 		 Instant instant = Instant.now();
-		//读取xml文件的文件夹路径  
-	      String infile=File.separator+"home"+File.separator+"emily"+File.separator+"Desktop"+File.separator+"Xmldata"+File.separator+"PsychOpen";
+		 String infile=File.separator+"home"+File.separator+"emily"+File.separator+"Desktop"+File.separator+"Xmldata"
+				  +File.separator+"PMC";
 	    //输出预处理后的数据的csv文件
-		  String outfile =File.separator+"home"+File.separator+"emily"+File.separator+"Desktop"+File.separator+"CSV";
+		  String outfile =File.separator+"home"+File.separator+"emily"+File.separator+"Desktop"+File.separator+"CSV4";
 		  String kuozhan = ".csv";
-		  createDir(outfile);
+		  FilePath.createDir(outfile);
 		  System.out.println(instant);
 	    // creates a StanfordCoreNLP object, with POS tagging, lemmatization, NER, parsing, and coreference resolution
         Properties props = new Properties(); 
      //   props.put("annotators", "tokenize, cleanxml, ssplit, pos, lemma, ner, parse, dcoref");  //cleanxml, sentiment,
         props.put("annotators", "tokenize, cleanxml,  ssplit,  pos"); 
         StanfordCoreNLP pipeline = new StanfordCoreNLP(props);  
-        List<String> file =getListFiles(infile,"",true);
+        List<String> file =FilePath.getListFiles(infile,"",true);
         Iterator<String> it = file.iterator();
         while(it.hasNext()){
            String filename = (String)it.next();
+           if(new File(filename).exists()){
     	   String text = test.Context(filename);
     	   Annotation document = new Annotation(text);
     	   pipeline.annotate(document);
@@ -59,40 +58,21 @@ public class Test {
     	           } 
             }
     	   String name = getfilename(filename);
-    	 //  System.out.println(name);
-    	   String subfile =outfile+File.separator+name+kuozhan;
+    	   String name1 = name.replace(".xml", "");
+    	   String subfile =outfile+File.separator+name1+kuozhan;
     	   CSVUtils.exportCsv(new File(subfile), dataList); //导出csv文件
     	   System.out.print(subfile+" ");
     	   System.out.println(instant);
     	         //    test.importCsv();  //导入csv文件
        }
+        }
          /*  Tree tree = sentence.get(TreeAnnotation.class);
            // this is the Stanford dependency graph of the current sentence
          SemanticGraph dependencies = sentence.get(CollapsedCCProcessedDependenciesAnnotation.class);
          Both sentence and token offsets start at 1!
          Map<Integer, CorefChain> graph =
                   document.get(CorefChainAnnotation.class);*/
-         }
-    
-		private static boolean createDir(String file) {
-		// TODO Auto-generated method stub
-			File dir = new File(file);
-			if (dir.exists()) {// 判断目录是否存在
-				System.out.print("创建CSV目录失败，目标目录已存在！ ");
-				return false;
-			}
-			if (!file.endsWith(File.separator)) {// 结尾是否以"/"结束
-				file = file + File.separator;
-			}
-			if (dir.mkdirs()) {// 创建目标目录
-				System.out.println("创建CSV目录成功！" + file);
-				return true;
-			} else {
-				System.out.println("创建CSV目录失败！");
-				return false;
-			}
-	}
-
+} 
 		private static String getfilename(String filename) {
 		// TODO Auto-generated method stub
 			File fname = new File(filename.trim());
@@ -126,38 +106,5 @@ public class Test {
         }
     }
     //获取某文件夹下所有文件及子文件名称
-    public static List<String> getListFiles(String path, String suffix, boolean isdepth) {  
-    	  List<String> lstFileNames = new ArrayList<String>();  
-    	  File file = new File(path);  
-    	  return listFile(lstFileNames, file, suffix, isdepth);  
-    	 }  
-    //显示目录的方法
-    private static List<String> listFile(List<String> lstFileNames, File f, String suffix, boolean isdepth) {  
-    	  // 若是目录, 采用递归的方法遍历子目录     
-    	  if (f.isDirectory()) {  
-    	   File[] t = f.listFiles();  
-    	     
-    	   for (int i = 0; i < t.length; i++) {  
-    	    if (isdepth || t[i].isFile()) {  
-    	     listFile(lstFileNames, t[i], suffix, isdepth);  
-    	    }  
-    	   }     
-    	  } else {  
-    	   String filePath = f.getAbsolutePath();     
-    	   if (!suffix.equals("")) {  
-    	    int begIndex = filePath.lastIndexOf("."); // 最后一个.(即后缀名前面的.)的索引   
-    	    String tempsuffix = "";  
-    	  
-    	    if (begIndex != -1) {  
-    	     tempsuffix = filePath.substring(begIndex + 1, filePath.length());  
-    	     if (tempsuffix.equals(suffix)) {  
-    	      lstFileNames.add(filePath);  
-    	     }  
-    	    }  
-    	   } else {  
-    	    lstFileNames.add(filePath);  
-    	   }  
-    	  }  
-    	  return lstFileNames;  
-    	 }  
+  
 	}
