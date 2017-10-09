@@ -74,9 +74,12 @@ class DANN(object):
         """
         
         nb_examples, nb_features = np.shape(X)
+        print nb_examples, nb_features
         nb_labels = len(set(Y))
+        print 'nb_labels'
+        print nb_labels
         nb_examples_adapt, _ = np.shape(X_adapt)
-
+        print nb_examples_adapt
         if self.verbose:
             print('[DANN parameters]', self.__dict__)
         
@@ -91,20 +94,18 @@ class DANN(object):
             d = 0.
         else:
             W, V, b, c, U, d = self.W, self.V, self.b, self.c, self.U, self.d 
-            
+        print'compute W, V, b, c, U, d'
+        # print  W, V, b, c, U, d
         best_valid_risk = 2.0
         continue_until = 30
 
         for t in range(self.maxiter):
             for i in range(nb_examples):
                 x_t, y_t = X[i,:], Y[i]
-                
                 hidden_layer = self.sigmoid(np.dot(W, x_t) + b)
                 output_layer = self.softmax(np.dot(V, hidden_layer) + c)
-                
                 y_hot = np.zeros(nb_labels)
-                y_hot[y_t] = 1.0
-                 
+                y_hot[y_t] = 1.0 
                 delta_c = output_layer - y_hot  
                 delta_V = np.dot(delta_c.reshape(-1,1), hidden_layer.reshape(1,-1)) 
                 delta_b = np.dot(V.T, delta_c) * hidden_layer * (1.-hidden_layer) 
@@ -154,6 +155,10 @@ class DANN(object):
             # early stopping
             if X_valid is not None:
                 valid_pred = self.predict(X_valid)
+                # print 'valid_pred'
+                # print valid_pred
+                # print 'Y_valid'
+                # print Y_valid
                 valid_risk = np.mean( valid_pred != Y_valid )
                 if valid_risk <= best_valid_risk:
                     if self.verbose: 
@@ -199,6 +204,8 @@ class DANN(object):
          the ith row of the array contains the predicted class for the ith example .
         """
         output_layer = self.forward(X)
+        # print 'output_layer'
+        # print output_layer
         return np.argmax(output_layer, 0)
 
     def predict_domain(self, X):
@@ -210,3 +217,25 @@ class DANN(object):
         output_layer = self.sigmoid(np.dot(self.U, hidden_layer) + self.d)
         return np.array(output_layer < .5, dtype=int)
 
+    def Softmax(x):
+    # Compute the softmax function for each row of the input x.
+        orig_shape = x.shape
+
+        if len(x.shape) > 1:
+        # Matrix 
+        
+        # 1. Subtract the max value for solving overflow problem since we proved that softmax is invariat to constant offsets.
+            tmp = np.max(x,axis=1)
+            x-=tmp.reshape((x.shape[0],1))# here we use Numpy broadcasting
+
+        # 2. compute the softmax 
+            x = np.exp(x)
+            tmp = np.sum(x, axis = 1)
+            x /= tmp.reshape((x.shape[0], 1))# here we use Numpy broadcasting
+        # Vector 
+            tmp = np.max(x)
+            x -= tmp
+            x = np.exp(x)
+            tmp = np.sum(x)
+            x /= tmp
+        return x
